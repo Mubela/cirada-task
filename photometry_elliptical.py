@@ -50,32 +50,6 @@ def do_photometry(image, table):
     photometry_table['aperture_sum'] /= factor
     return photometry_table;
     
-def do_photometry_q(image, table):
-    hdu = fits.open(image)
-    if hdu[0].data.shape[0] == 1 or hdu[0].data.shape[1] == 1:
-        hdu[0].data = hdu[0].data.reshape(hdu[0].data.shape[-2], hdu[0].data.shape[-1]) # change shape to (n,n) from (1,1,n,n) or (1,n,n)
-    data = u.Quantity(hdu[0].data, unit=hdu[0].header['BUNIT'])
-    w = WCS(hdu[0].header).celestial
-
-    a, b, pa, pixel_size = beam_info(image) # using major axis of synthesized beam as radius
-    positions = SkyCoord(table['RA_Source'], table['DEC_Source'], frame='fk5', unit='deg')
-    
-    sky_aperture = SkyEllipticalAperture(positions, a*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
-    annulus_aperture = SkyEllipticalAnnulus(positions, a*u.arcsec, (a*2)*u.arcsec, (b*2)*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
-    apertures = [sky_aperture, annulus_aperture]
-    photometry_table = aperture_photometry(data, apertures, wcs=w)
-    
-    factor = 1.133*(a*b)/pow(pixel_size,2)
-    photometry_table['aperture_sum_0'] /= factor
-    photometry_table['aperture_sum_1'] /= factor
-    
-    bkg_mean = photometry_table['aperture_sum_1']/annulus_aperture.shape
-    bkg_sum = bkg_mean*sky_aperture.shape
-    final_sum = photometry_table['aperture_sum_0'] - bkg_sum
-    
-    photometry_table['final_aperture_sum'] = final_sum
-    return photometry_table;
-    
 #catalogue_SE = 'sources_in_J100200+02300.csv' # catalogue of sources in the single epoch image
 #fits_tt0 = 'J100200+023000_.image.pbcor.tt0.subim.fits'
 #fits_tt1 = 'J100200+023000_.image.pbcor.tt1.subim.fits'
@@ -113,11 +87,7 @@ photometry_on_tt1 = do_photometry(fits_tt1, table)
 print('\nPhotometry on tt0 image\n', photometry_on_tt0)
 print('\nPhotometry on tt1 image\n', photometry_on_tt1)
 
-
 table_tt0_tt1 = photometry_on_tt0[:]
-#table_tt0_tt1.add_column(photometry_on_tt1['final_aperture_sum'], rename_duplicate=True)
-#table_tt0_tt1.add_column(table_tt0_tt1['final_aperture_sum_1']/table_tt0_tt1['final_aperture_sum'], name='Spectral Index')
-
 table_tt0_tt1.add_column(photometry_on_tt1['aperture_sum'], rename_duplicate=True)
 table_tt0_tt1.add_column(table_tt0_tt1['aperture_sum_1']/table_tt0_tt1['aperture_sum'], name='Spectral Index')
 

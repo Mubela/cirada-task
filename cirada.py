@@ -1,20 +1,24 @@
 # Written in/for python 3.x.x
-# run the script by invoking the main inputs in the format
+# run the script by invoking the main inputs in the format:
 # python cirada.py <input catalogue> <zeroth order FITS image> <first order FITS image>
-# shou
+# or run it without invoking inputs and it will prompt you to enter each input separately
 
 import os
 import sys
-import numpy as np
-from tqdm import tqdm
 from glob import glob
+from tqdm import tqdm
+from termcolor import colored
+import numpy as np
+from astropy.stats import SigmaClip
 import astropy.units as u
 from astropy.io import fits
-from astropy.wcs import WCS
 from radio_beam import Beam
+from astropy.wcs import WCS
 from astropy.table import Table
 from astropy.coordinates import SkyCoord
+from photutils import Background2D, MedianBackground
 from photutils import aperture_photometry
+from photutils.aperture import SkyEllipticalAnnulus
 from photutils.aperture import SkyCircularAperture
 from photutils.aperture import SkyEllipticalAperture
 
@@ -30,27 +34,32 @@ def beam_info(fits_image_file):
     pixels_per_beam = beam['BMAJ']/np.abs(header['CDELT1']) # number pixels forming the beam
     return major, minor, pa;
 
-def do_photometry(image, table):
+ def do_photometry(image, table):
     hdu = fits.open(image)
     if hdu[0].data.shape[0] == 1 or hdu[0].data.shape[1] == 1:
         hdu[0].data = hdu[0].data.reshape(hdu[0].data.shape[-2], hdu[0].data.shape[-1]) # change shape to (n,n) from (1,1,n,n) or (1,n,n)
     data = u.Quantity(hdu[0].data, unit=hdu[0].header['BUNIT'])
     w = WCS(hdu[0].header).celestial
 
-    a, b, pa = beam_info(image) # using major axis of synthesized beam as radius
+    a, b, pa, pixel_size = beam_info(image)
     positions = SkyCoord(table['RA_Source'], table['DEC_Source'], frame='fk5', unit='deg')
     
-    sky_aperture = SkyEllipticalAperture(positions, a*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
-    annulus_aperture = SkyEllipticalAnnulus(positions, a*u.arcsec, (a+2)*u.arcsec, (b+2)*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
-    apertures = [sky_aperture, annulus_aperture]
+    sigma_clip = SigmaClip(sigma=3)
+    bkg_estimator = MedianBackground()
+    bkg = Background2D(data, (20,20), filter_size=(3,3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
+    data -= bkg.background
+
+    apertures = SkyEllipticalAperture(positions, a*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
     photometry_table = aperture_photometry(data, apertures, wcs=w)
-    
-    bkg_mean = photometry_table['aperture_sum_1']/annulus_aperture.shape
-    bkg_sum = bkg_mean*sky_aperture.shape
-    final_sum = photometry_table['aperture_sum_0'] - bkg_sum
-    photometry_table['final_aperture_sum'] = final_sum
+    factor = 1.133*(a*b)/pow(pixel_size,2)
+    photometry_table['aperture_sum'] /= factor
     return photometry_table;
 
+if (len(sys.argv) > 1 and len(sys.argv) < 4) or len(sys.argv) > 4:
+    print(colored("\nWrong format used! Input format required:", "red"), colored('\n\tIn terminal','blue'),'\n\t\t$ python cirada.py <input catalogue> <zeroth order FITS image> <first order FITS image>', colored('\n\n\tOr in iPython','blue'), colored('\n\t\t In[1]:','green'), ' %run cirada.py <input catalogue> <zeroth order FITS image> <first order FITS image>\n')
+    print(colored("Alternatively, run the script without invoking inputs and it will prompt you to enter each input separately!\n", "red"))
+    print('\t\t $python cirada.py\n')
+    sys.exit()
 try:
     master_catalogue = sys.argv[1]
 except:
@@ -69,14 +78,7 @@ except:
     print('\n\n')
     os.system('ls *tt1**fits')
     fits_tt1 = input("\nEnter a filename for the first order single epoch image:\n>")
-    
-if 'argv' in globals() and len(argv) < 3:
-    print("Wrong format used! Input format required >> python cirada.py <input catalogue> <zeroth order FITS image> <first order FITS image>"
-    quit()
 
-# filenames
-#fits_tt0 = 'J100200+023000_.image.pbcor.tt0.subim.fits'
-#fits_tt1 = 'J100200+023000_.image.pbcor.tt1.subim.fits'
 target = fits_tt0.split('_')[0]
 
 #master_catalogue = 'CIRADA_VLASS1QL_table2_hosts.csv' # full catalogue
@@ -107,25 +109,24 @@ for i in tqdm(range(len(table))):
         
 ### catalogue outputs
 table_se_image = table[in_table] # single epoch image catalogue
-table_se_image.write(catalogue_SE, overwrite=True)
+table_se_image.write(catalogue_SE, format='csv', overwrite=True)
 
 sources_not_in_se_image = table[:] # sources in QL catalogue but not in SE image
 sources_not_in_se_image.remove_rows(in_table)
-sources_not_in_se_image.write(catalogue_QL_not_SE, overwrite=True)
+sources_not_in_se_image.write(catalogue_QL_not_SE, format='csv', overwrite=True)
 
 table = Table.read(catalogue_SE)
 
 photometry_on_tt0 = do_photometry(fits_tt0, table)
 photometry_on_tt1 = do_photometry(fits_tt1, table)
 
-print(photometry_on_tt0)
-print(photometry_on_tt1)
+print('\nPhotometry on tt0 image\n', photometry_on_tt0)
+print('\nPhotometry on tt1 image\n', photometry_on_tt1)
 
 table_tt0_tt1 = photometry_on_tt0[:]
-table_tt0_tt1.add_column(photometry_on_tt1['final_aperture_sum'], rename_duplicate=True)
-table_tt0_tt1.add_column(table_tt0_tt1['final_aperture_sum_1']/table_tt0_tt1['final_aperture_sum'], name='Spectral Index')
+table_tt0_tt1.add_column(photometry_on_tt1['aperture_sum'], rename_duplicate=True)
+table_tt0_tt1.add_column(table_tt0_tt1['aperture_sum_1']/table_tt0_tt1['aperture_sum'], name='Spectral Index')
 
 print('\nCombined table with spectral indices\n', table_tt0_tt1)
-
 table_tt0_tt1.write(f'{target}_measured_tt0-tt1_Sv_and_alpha.csv', overwrite=True)
 
