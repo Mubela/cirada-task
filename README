@@ -1,0 +1,5 @@
+Assignment tasks.
+1. Accept a catalogue and two single epoch image file names (taylor coefficient tt0, tt1 images) as input
+2. Measure flux densities and spectral indices of sources in the images at the positions of the sources listed in the catalogue
+3. Write out the results to a CSV file
+4. Identify sources appearing in the catalogue but not present in the image
