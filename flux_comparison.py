@@ -1,3 +1,7 @@
+# Written in/for python 3.x.x
+# A plot of the quick look flux and the single epoch image flux
+# execution format: python flux_comparison.py <input catalogue> <zeroth order FITS image>
+
 # flux density comparison
 import os
 import sys
@@ -75,5 +79,5 @@ ax.tick_params(axis='both', direction='in', which='both', bottom=True, left=True
 ax.legend()
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.yaxis.set_minor_locator(AutoMinorLocator())
-fig.show()
 fig.savefig(f'quick_look_vs_photometry_flux_on_{target}.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None, transparent=False, bbox_inches=None, pad_inches=0.1, metadata=None)
+plt.show()

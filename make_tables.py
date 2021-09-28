@@ -1,7 +1,7 @@
 # Written in/for python 3.x.x
-# The script accepts a catalogue and a FITS image and identifies which sources in the catalogue are the image and which are not.
-# Either set of sources is written out to a separate table
-# execution format: python make_tables.py <input catalogue> <zeroth order FITS image>
+# The script accepts a catalogue and a FITS image and identifies which sources in the catalogue are present in
+# the image and which are not. Either set of sources is written out to a separate table.
+# Execution format: python make_tables.py <input catalogue> <zeroth order FITS image>
 
 from astropy.coordinates  import SkyCoord
 from astropy.table import Table

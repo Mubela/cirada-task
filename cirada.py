@@ -77,8 +77,6 @@ except:
     fits_tt1 = input("\nEnter a filename for the first order single epoch image:\n>")
 
 target = fits_tt0.split('_')[0]
-
-#master_catalogue = 'CIRADA_VLASS1QL_table2_hosts.csv' # full catalogue
 catalogue_SE = f'sources_in_{target}.csv' # catalogue of sources in the single epoch image
 catalogue_QL_not_SE = f'sources_not_in_{target}.csv' # catalogue of sources not in the single epoch image
 

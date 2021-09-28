@@ -1,4 +1,5 @@
 # Written in/for python 3.x.x
+# This script uses photometry to calculate flux density and spectral indices on single epoch images using the positions of sources in the quick look catalogue
 # run the script by invoking the main inputs in the format:
 # python photometry_elliptical.py <input catalogue> <zeroth order FITS image> <first order FITS image>
 # or run it without invoking inputs and it will prompt you to enter each input separately
@@ -50,10 +51,6 @@ def do_photometry(image, table):
     factor = 1.133*(a*b)/pow(pixel_size,2)
     photometry_table['aperture_sum'] /= factor
     return photometry_table;
-    
-#catalogue_SE = 'sources_in_J100200+02300.csv' # catalogue of sources in the single epoch image
-#fits_tt0 = 'J100200+023000_.image.pbcor.tt0.subim.fits'
-#fits_tt1 = 'J100200+023000_.image.pbcor.tt1.subim.fits'
 
 if (len(sys.argv) > 1 and len(sys.argv) < 4) or len(sys.argv) > 4:
     print(colored("\nWrong format used! Input format required:", "red"), colored('\n\tIn terminal','blue'),'\n\t\t$ python photometry_elliptical.py <input catalogue> <zeroth order FITS image> <first order FITS image>', colored('\n\n\tOr in iPython','blue'), colored('\n\t\t In[1]:','green'), ' %run photometry_elliptical.py <input catalogue> <zeroth order FITS image> <first order FITS image>\n')
