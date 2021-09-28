@@ -44,13 +44,13 @@ Or:
 
 ### Output table columns
 ```
-'Source_name'      | Name as in the quick look catalogue  
+'Source_name'      | Name as per the quick look catalogue  
 'id'               | ID number as per the sources contained in the single epoch image used in the photometry  
 'xcenter'          | x coordinate in pixels  
 'ycenter'          | y coordinate in pixels  
 'sky_center'       | sky coordinates in degrees (ra,dec)  
-'aperture_sum'     | photometry measurement on the zeroth order image (tt0)    
-'aperture_sum_1'   | photometry measurement on the first order image (tt1)    
+'aperture_sum'     | photometry measurement on the zeroth order image (tt0) in Jy/beam  
+'aperture_sum_1'   | photometry measurement on the first order image (tt1) in Jy/beam  
 'Spectral Index'   | Spectral index measurement, I_alpha = I_tt1/I_tt0  
 ```
 ### Dependencies
