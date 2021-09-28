@@ -5,21 +5,18 @@
 
 import os
 import sys
-from glob import glob
 from tqdm import tqdm
 from termcolor import colored
 import numpy as np
-from astropy.stats import SigmaClip
 import astropy.units as u
+from astropy.stats import SigmaClip
 from astropy.io import fits
-from radio_beam import Beam
 from astropy.wcs import WCS
 from astropy.table import Table
 from astropy.coordinates import SkyCoord
+from radio_beam import Beam
 from photutils import Background2D, MedianBackground
 from photutils import aperture_photometry
-from photutils.aperture import SkyEllipticalAnnulus
-from photutils.aperture import SkyCircularAperture
 from photutils.aperture import SkyEllipticalAperture
 
 def beam_info(fits_image_file):

@@ -3,3 +3,23 @@ Assignment tasks.
 2. Measure flux densities and spectral indices of sources in the images at the positions of the sources listed in the catalogue
 3. Write out the results to a CSV file
 4. Identify sources appearing in the catalogue but not present in the image
+
+
+There are 3 scripts that deal with the above tasks.
+- make_tables.py identifies the sources in the single epoch images (as each pair has covers the same sky, it's run on only one). The script writes out two catalogues, one for the sources present in the single epoch image, the remaining sources, seen in the QL catalogue but in the single epoch images.
+- photometry_elliptical.py performs photometry on the two single epoch images (tt0 and tt1) using the output from make_tables.py that contains only the sources present in the single epoch images. It measures the flux densities in the zeroth order and first order images, and measures the spectral index using the ratio: I_alpha = I_1/I_0. These are written out to a CSV format file.
+- cirada.py performs the tasks implemented in make_tables.py and photometry_elliptical.py in a single script.
+
+The fourth script, flux_comparison.py,  plots the fluxes in the quick look catalogue against the fluxes measured in the single epoch image
+
+Dependencies:
+
+os
+sys
+tqdm
+termcolor
+numpy
+astropy
+radio_beam
+photutils
+matplotlib

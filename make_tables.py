@@ -8,7 +8,6 @@ from astropy.table import Table
 from astropy.io import fits
 from astropy.wcs import WCS
 from termcolor import colored
-from glob import glob
 from tqdm import tqdm
 import sys
 import os
@@ -42,7 +41,7 @@ w0 = WCS(hdu0[0].header).celestial
 
 # table has >700k sources, this will take a while - needs optimizing
 in_table = [] # list of sources in single epoch image
-for i in range(len(table)):
+for i in tqdm(range(len(table))): # tqdm monitors the progress
     ra = table['RA_Source'][i]
     dec = table['DEC_Source'][i]
     position = SkyCoord(ra, dec, unit='deg', frame='fk5')

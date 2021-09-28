@@ -1,7 +1,10 @@
+# Written in/for python 3.x.x
+# run the script by invoking the main inputs in the format:
+# python photometry_elliptical.py <input catalogue> <zeroth order FITS image> <first order FITS image>
+# or run it without invoking inputs and it will prompt you to enter each input separately
+
 import os
 import sys
-from glob import glob
-from tqdm import tqdm
 from termcolor import colored
 import numpy as np
 from astropy.stats import SigmaClip
@@ -13,8 +16,6 @@ from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from photutils import Background2D, MedianBackground
 from photutils import aperture_photometry
-from photutils.aperture import SkyEllipticalAnnulus
-from photutils.aperture import SkyCircularAperture
 from photutils.aperture import SkyEllipticalAperture
 
 def beam_info(fits_image_file):
@@ -41,7 +42,7 @@ def do_photometry(image, table):
     
     sigma_clip = SigmaClip(sigma=3)
     bkg_estimator = MedianBackground()
-    bkg = Background2D(data, (20,20), filter_size=(3,3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
+    bkg = Background2D(data, (114,114), filter_size=(19,19), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
     data -= bkg.background
 
     apertures = SkyEllipticalAperture(positions, a*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
