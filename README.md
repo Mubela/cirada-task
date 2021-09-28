@@ -7,7 +7,7 @@
 
 5. Auxiliary step: Plot the fluxes in the quick look catalogue and those measure from the photometry on the single epoch image against each other
 
-### This respository contains four scripts
+### This repository contains four scripts
 ```
 make_tables.py
 ```
