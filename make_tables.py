@@ -31,7 +31,7 @@ except:
     fits_tt0 = input("\nEnter a filename for the zeroth order single ephoch image:\n>")
 
 target = fits_tt0.split('_')[0] # used in output file names
-table = Table.read(catalogue)
+table = Table.read(catalogue_SE)
 hdu0 = fits.open(fits_tt0)
 
 if hdu0[0].data.shape[0] == 1 or hdu0[0].data.shape[1] == 1:

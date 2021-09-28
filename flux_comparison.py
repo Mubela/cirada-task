@@ -1,4 +1,6 @@
+# flux density comparison
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.table import Table
@@ -25,10 +27,27 @@ def best_fit(x_data, y_data):
 
     return a, b;
 
-# flux density comparison
 
-quick_look_catalogue = 'sources_in_J100200+02300.csv'
-photometry_catalogue = 'J100200+023000_measured_tt0-tt1_Sv_and_alpha.csv'
+
+if (len(sys.argv) > 1 and len(sys.argv) < 3) or len(sys.argv) > 3:
+    print(colored("\nWrong format used! Input format required:", "red"), colored('\n\tIn terminal','blue'),'\n\t\t$ python flux_comparison.py <input catalogue> <zeroth order FITS image> <first order FITS image>', colored('\n\n\tOr in iPython','blue'), colored('\n\t\t In[1]:','green'), ' %run flux_comparison.py <input catalogue> <zeroth order FITS image>\n')
+    print(colored("Alternatively, run the script without invoking inputs and it will prompt you to enter each input separately!\n", "red"))
+    print('\t\t $python make_tables.py\n')
+    sys.exit()
+try:
+    quick_look_catalogue = sys.argv[1]
+except:
+    print('\n\n')
+    os.system('ls *.csv')
+    quick_look_catalogue = input("\nEnter a filename for the input catalogue:\n>")
+try:
+    photometry_catalogue = sys.argv[2]
+except:
+    print('\n\n')
+    os.system('ls *tt0**fits')
+    photometry_catalogue = input("\nEnter a filename for the zeroth order single ephoch image:\n>")
+#quick_look_catalogue = 'sources_in_J100200+02300.csv'
+#photometry_catalogue = 'J100200+023000_measured_tt0-tt1_Sv_and_alpha.csv'
 target = photometry_catalogue.split('_')[0]
 
 table_ql = Table.read(quick_look_catalogue)
@@ -57,4 +76,4 @@ ax.legend()
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.yaxis.set_minor_locator(AutoMinorLocator())
 fig.show()
-#fig.savefig(f'quick_look_vs_photometry_flux_on_{target}.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None, transparent=False, bbox_inches=None, pad_inches=0.1, metadata=None)
+fig.savefig(f'quick_look_vs_photometry_flux_on_{target}.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None, transparent=False, bbox_inches=None, pad_inches=0.1, metadata=None)

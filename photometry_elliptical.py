@@ -89,6 +89,7 @@ print('\nPhotometry on tt0 image\n', photometry_on_tt0)
 print('\nPhotometry on tt1 image\n', photometry_on_tt1)
 
 table_tt0_tt1 = photometry_on_tt0[:]
+table_tt0_tt1.add_column(table['Source_name'], index=0)
 table_tt0_tt1.add_column(photometry_on_tt1['aperture_sum'], rename_duplicate=True)
 table_tt0_tt1.add_column(table_tt0_tt1['aperture_sum_1']/table_tt0_tt1['aperture_sum'], name='Spectral Index')
 

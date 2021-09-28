@@ -31,7 +31,7 @@ def beam_info(fits_image_file):
     pixels_per_beam = beam['BMAJ']/np.abs(header['CDELT1']) # number pixels forming the beam
     return major, minor, pa;
 
- def do_photometry(image, table):
+def do_photometry(image, table):
     hdu = fits.open(image)
     if hdu[0].data.shape[0] == 1 or hdu[0].data.shape[1] == 1:
         hdu[0].data = hdu[0].data.reshape(hdu[0].data.shape[-2], hdu[0].data.shape[-1]) # change shape to (n,n) from (1,1,n,n) or (1,n,n)
@@ -121,6 +121,7 @@ print('\nPhotometry on tt0 image\n', photometry_on_tt0)
 print('\nPhotometry on tt1 image\n', photometry_on_tt1)
 
 table_tt0_tt1 = photometry_on_tt0[:]
+table_tt0_tt1.add_column(table['Source_name'], index=0)
 table_tt0_tt1.add_column(photometry_on_tt1['aperture_sum'], rename_duplicate=True)
 table_tt0_tt1.add_column(table_tt0_tt1['aperture_sum_1']/table_tt0_tt1['aperture_sum'], name='Spectral Index')
 
