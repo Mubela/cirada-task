@@ -19,23 +19,28 @@ photometry_elliptical.py
 
 > performs photometry on the two single epoch images (tt0 and tt1) using the output from make_tables.py that contains only the sources present in the single epoch images. It measures the flux densities in the zeroth order and first order images, and measures the spectral index using the ratio: I_alpha = I_1/I_0. These are written out to a CSV format file.
 
+```
 cirada.py
+```
 
 > performs the tasks implemented in make_tables.py and photometry_elliptical.py in a single script.
 
+```
 flux_comparison.py
+```
 
 > plots the fluxes in the quick look catalogue against the fluxes measured in the single epoch image
 
 ### Order of execution
 
 Either:
-
+```
 > make_tables.py -> photometry_elliptical.py -> flux_comparison.py
-
+```
 Or:
-
+```
 > cirada.py -> flux_comparison.py
+```
 
 ### Output table columns
 
