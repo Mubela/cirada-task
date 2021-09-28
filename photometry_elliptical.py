@@ -28,7 +28,7 @@ def beam_info(fits_image_file):
     minor = float(f"{beam['BMIN']*3600:.2f}")
     pa = float(f"{beam['BPA']*3600:.2f}")
     pixel_size = float('{:.2f}'.format(np.abs(header['CDELT1'])*3600)) # CDELT1 is the change in value, in the x dirction, in beam units. Therefore each step (pixel) is equal to |CDELT1| beam units. Multiply 3600 to convert degs to arcsecs
-    pixels_per_beam = beam['BMAJ']/np.abs(header['CDELT1']) # number pixels forming the beam
+    pixels_per_beam = beam['BMAJ']/np.abs(header['CDELT1']) # number of pixels across the beam
     return major, minor, pa, pixel_size;
 
 def do_photometry(image, table):
@@ -48,7 +48,7 @@ def do_photometry(image, table):
 
     apertures = SkyEllipticalAperture(positions, a*u.arcsec, b*u.arcsec, theta=pa*u.arcsec)
     photometry_table = aperture_photometry(data, apertures, wcs=w)
-    factor = 1.133*(a*b)/pow(pixel_size,2)
+    factor = 1.133*(a*b)/pow(pixel_size,2) # I've used this to define the beam for photutils
     photometry_table['aperture_sum'] /= factor
     return photometry_table;
 

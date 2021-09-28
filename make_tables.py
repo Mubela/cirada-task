@@ -13,7 +13,7 @@ import sys
 import os
 
 if (len(sys.argv) > 1 and len(sys.argv) < 3) or len(sys.argv) > 3:
-    print(colored("\nWrong format used! Input format required:", "red"), colored('\n\tIn terminal','blue'),'\n\t\t$ python make_tables.py <input catalogue> <zeroth order FITS image> <first order FITS image>', colored('\n\n\tOr in iPython','blue'), colored('\n\t\t In[1]:','green'), ' %run make_tables.py <input catalogue> <zeroth order FITS image>\n')
+    print(colored("\nWrong format used! Input format required:", "red"), colored('\n\tIn terminal','blue'),'\n\t\t$ python make_tables.py <input catalogue> <zeroth order FITS image>', colored('\n\n\tOr in iPython','blue'), colored('\n\t\t In[1]:','green'), ' %run make_tables.py <input catalogue> <zeroth order FITS image>\n')
     print(colored("Alternatively, run the script without invoking inputs and it will prompt you to enter each input separately!\n", "red"))
     print('\t\t $python make_tables.py\n')
     sys.exit()
