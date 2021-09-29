@@ -43,13 +43,13 @@ try:
 except:
     print('\n\n')
     os.system('ls *.csv')
-    quick_look_catalogue = input("\nEnter a filename for the input catalogue:\n>")
+    quick_look_catalogue = input("\nEnter a filename for the quicklook generated catalogue:\n>")
 try:
     photometry_catalogue = sys.argv[2]
 except:
     print('\n\n')
-    os.system('ls *tt0**fits')
-    photometry_catalogue = input("\nEnter a filename for the zeroth order single ephoch image:\n>")
+    os.system('ls *.csv')
+    photometry_catalogue = input("\nEnter a filename for the photometry generated catalogue:\n>")
 #quick_look_catalogue = 'sources_in_J100200+02300.csv'
 #photometry_catalogue = 'J100200+023000_measured_tt0-tt1_Sv_and_alpha.csv'
 target = photometry_catalogue.split('_')[0]
