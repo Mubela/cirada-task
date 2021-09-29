@@ -5,7 +5,7 @@
 3. Write out the results to a CSV file
 4. Identify sources appearing in the catalogue but not present in the image
 
-5. Auxiliary step: Plot the fluxes in the quick look catalogue and those measure from the photometry on the single epoch image against each other
+5. Auxiliary step: Plot the fluxes in the quick look catalogue and those measured from the photometry on the single epoch image against each other
 
 ### This repository contains four scripts
 ```
